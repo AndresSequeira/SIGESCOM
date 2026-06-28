@@ -93,7 +93,7 @@ function App() {
 
   useEffect(() => {
     if (!visibleViews.some((view) => view.id === activeView)) {
-      setActiveView(session ? 'requests' : 'auth');
+      setActiveView(visibleViews[0]?.id || 'auth');
     }
   }, [activeView, session, visibleViews]);
 
@@ -248,6 +248,7 @@ function AuthView({ session, setSession, notify }) {
     nombre_completo: '',
     correo: '',
     password_hash: '',
+    confirmar_password: '',
     id_departamento: '',
     telefono: '',
     puesto: '',
@@ -287,9 +288,14 @@ function AuthView({ session, setSession, notify }) {
       setResult('Seleccione un puesto antes de registrar el usuario.');
       return;
     }
+    if (register.values.password_hash !== register.values.confirmar_password) {
+      setResult('La contrasena y la confirmacion no coinciden.');
+      return;
+    }
     setLoading(true);
     try {
-      const data = await authApi.registrar({ ...register.values, id_departamento: Number(register.values.id_departamento) });
+      const { confirmar_password, ...payload } = register.values;
+      const data = await authApi.registrar({ ...payload, id_departamento: Number(register.values.id_departamento) });
       setResult(JSON.stringify(data, null, 2));
       notify('Usuario registrado');
     } catch (error) {
@@ -322,6 +328,7 @@ function AuthView({ session, setSession, notify }) {
         nombre_completo: '',
         correo: '',
         password_hash: '',
+        confirmar_password: '',
         id_departamento: '',
         telefono: '',
         puesto: '',
@@ -341,7 +348,7 @@ function AuthView({ session, setSession, notify }) {
             <Field label="Correo">
               <Input type="email" placeholder="usuario@empresa.com" {...login.bind('correo')} />
             </Field>
-            <Field label="Password hash">
+            <Field label="Contrasena">
               <Input placeholder="HASH_DE_LA_CONTRASENA" {...login.bind('password_hash')} />
             </Field>
             <Button icon={LogIn} loading={loading}>Iniciar sesion</Button>
@@ -359,8 +366,11 @@ function AuthView({ session, setSession, notify }) {
                 <Button type="button" variant="secondary" icon={Search} onClick={handleValidateEmail} />
               </div>
             </Field>
-            <Field label="Password hash">
+            <Field label="Contrasena">
               <Input placeholder="HASH_SIMULADO_001" {...register.bind('password_hash')} />
+            </Field>
+            <Field label="Confirmar contrasena">
+              <Input placeholder="Repita la contrasena" {...register.bind('confirmar_password')} />
             </Field>
             <div className="grid gap-3 md:grid-cols-2">
               <Field label="Departamento">
@@ -411,6 +421,7 @@ function ResetView({ notify }) {
     correo: '',
     codigo_reset: '',
     password_hash: '',
+    confirmar_password: '',
   });
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
@@ -428,7 +439,14 @@ function ResetView({ notify }) {
         if (data.codigo_reset) form.update('codigo_reset', data.codigo_reset);
       }
       if (action === 'validate') data = await authApi.validarReset(form.values.codigo_reset);
-      if (action === 'change') data = await authApi.cambiarPassword(form.values);
+      if (action === 'change') {
+        if (form.values.password_hash !== form.values.confirmar_password) {
+          setResult('La nueva contrasena y la confirmacion no coinciden.');
+          return;
+        }
+        const { confirmar_password, ...payload } = form.values;
+        data = await authApi.cambiarPassword(payload);
+      }
       setResult(JSON.stringify(data, null, 2));
       notify('Operacion de reset completada');
     } catch (error) {
@@ -446,10 +464,13 @@ function ResetView({ notify }) {
             <Field label="Correo">
               <Input type="email" placeholder="usuario@empresa.com" {...form.bind('correo')} />
             </Field>
-            <Field label="Nuevo password hash">
+            <Field label="Nueva contrasena">
               <Input placeholder="HASH_NUEVO_001" {...form.bind('password_hash')} />
             </Field>
           </div>
+          <Field label="Confirmar nueva contrasena">
+            <Input placeholder="Repita la nueva contrasena" {...form.bind('confirmar_password')} />
+          </Field>
           <Field label="Codigo reset">
             <Input placeholder="Codigo generado por el sistema" {...form.bind('codigo_reset')} />
           </Field>
