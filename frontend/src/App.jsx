@@ -31,6 +31,23 @@ const views = [
 
 const priorityOptions = ['BAJA', 'MEDIA', 'ALTA', 'URGENTE'];
 const statusOptions = ['', 'BORRADOR', 'PENDIENTE', 'APROBADA', 'RECHAZADA', 'DEVUELTA', 'CANCELADA'];
+const jobOptions = [
+  'Analista de Compras',
+  'Analista de Sistemas',
+  'Contador',
+  'Jefatura de Tecnologia',
+  'Auditor Interno',
+  'Administrador del Sistema',
+  'Asistente Administrativo',
+  'Gerente de Departamento',
+];
+
+function pick(row, ...keys) {
+  for (const key of keys) {
+    if (row?.[key] !== undefined && row?.[key] !== null) return row[key];
+  }
+  return '';
+}
 
 function App() {
   const [activeView, setActiveView] = useState('auth');
@@ -262,6 +279,14 @@ function AuthView({ session, setSession, notify }) {
 
   async function handleRegister(event) {
     event.preventDefault();
+    if (!register.values.id_departamento) {
+      setResult('Seleccione un departamento activo antes de registrar el usuario.');
+      return;
+    }
+    if (!register.values.puesto) {
+      setResult('Seleccione un puesto antes de registrar el usuario.');
+      return;
+    }
     setLoading(true);
     try {
       const data = await authApi.registrar({ ...register.values, id_departamento: Number(register.values.id_departamento) });
@@ -340,9 +365,13 @@ function AuthView({ session, setSession, notify }) {
             <div className="grid gap-3 md:grid-cols-2">
               <Field label="Departamento">
                 <Select {...register.bind('id_departamento')}>
+                  <option value="">Seleccione departamento</option>
                   {(departamentos.data || []).map((dep) => (
-                    <option key={dep.id_departamento} value={dep.id_departamento}>
-                      {dep.nombre}
+                    <option
+                      key={pick(dep, 'id_departamento', 'ID_DEPARTAMENTO')}
+                      value={pick(dep, 'id_departamento', 'ID_DEPARTAMENTO')}
+                    >
+                      {pick(dep, 'nombre', 'NOMBRE')}
                     </option>
                   ))}
                 </Select>
@@ -352,7 +381,14 @@ function AuthView({ session, setSession, notify }) {
               </Field>
             </div>
             <Field label="Puesto">
-              <Input placeholder="Analista de compras" {...register.bind('puesto')} />
+              <Select {...register.bind('puesto')}>
+                <option value="">Seleccione puesto</option>
+                {jobOptions.map((job) => (
+                  <option key={job} value={job}>
+                    {job}
+                  </option>
+                ))}
+              </Select>
             </Field>
             <Button icon={UserPlus} loading={loading}>Registrar</Button>
           </form>
