@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+.nav-button {
+  @apply flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm font-medium text-muted transition hover:bg-panel hover:text-ink;
+}
+
+.nav-button-active {
+  @apply bg-brand text-white hover:bg-brand hover:text-white;
+}
+
+.mobile-tab {
+  @apply shrink-0 rounded-md border border-line px-3 py-2 text-sm font-medium text-muted;
+}
+
+.mobile-tab-active {
+  @apply border-brand bg-brand text-white;
+}
+
+.badge {
+  @apply rounded border border-line bg-white px-2 py-1 font-medium text-ink;
+}
+
+.input {
+  @apply w-full rounded-md border border-line bg-white px-3 py-2 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/15;
+}
+
+.btn {
+  @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+.btn-primary {
+  @apply bg-brand text-white hover:bg-teal-800;
+}
+
+.btn-secondary {
+  @apply border border-line bg-white text-ink hover:bg-panel;
+}
+
+.btn-danger {
+  @apply bg-red-700 text-white hover:bg-red-800;
+}
+
+.alert {
+  @apply rounded-md border px-3 py-2 text-sm;
+}
+
+.alert-info {
+  @apply border-line bg-panel text-muted;
+}
+
+.result {
+  @apply mt-4 max-h-80 overflow-auto rounded-md border border-line bg-slate-950 p-3 text-xs leading-5 text-slate-100;
+}
+
+.data-table {
+  @apply min-w-full border-separate border-spacing-0 text-sm;
+}
+
+.data-table th {
+  @apply border-b border-line bg-panel px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted;
+}
+
+.data-table td {
+  @apply break-words border-b border-line px-3 py-2 align-top;
+}
+
+.empty-cell {
+  @apply py-8 text-center text-muted;
+}
+
+.status {
+  @apply rounded border border-line bg-panel px-2 py-1 text-xs font-semibold;
+}
+
+.link-button {
+  @apply text-sm font-semibold text-brand hover:text-teal-800;
+}
+
+.toast {
+  @apply fixed bottom-5 right-5 z-50 rounded-md bg-ink px-4 py-3 text-sm font-medium text-white shadow-soft;
+}
