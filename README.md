@@ -58,3 +58,19 @@ El orden recomendado de ejecucion esta documentado en:
 sql/README_EJECUCION.md
 ```
 
+## Publicacion en GitHub Pages
+
+El proyecto incluye el workflow:
+
+```text
+.github/workflows/deploy-frontend.yml
+```
+
+Cuando el repositorio se sube a GitHub y se hace push a `main`, GitHub Actions compila `frontend/` y publica el contenido de `frontend/dist` en GitHub Pages.
+
+En GitHub, active Pages desde:
+
+```text
+Settings > Pages > Source: GitHub Actions
+```
+
